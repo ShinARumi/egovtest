@@ -5,7 +5,7 @@
 	id="WebApp_ID" version="2.5">
 	<display-name>egov.sample</display-name>
     
-	<filter>
+	<filter><!-- 필터에 대한 설정 내용으로 필터를 불러와 인코딩을 잡아준다.	 -->
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
 		<init-param>
@@ -18,7 +18,7 @@
 		<url-pattern>*.do</url-pattern>
 	</filter-mapping>
     
-	<filter>
+	<filter><!-- 필터에 대한 설정 내용으로 필터를 불러와 크로스 스크립팅이라는 해킹 기법을 막아준다.	 -->
 		<filter-name>HTMLTagFilter</filter-name>
 		<filter-class>egovframework.rte.ptl.mvc.filter.HTMLTagFilter</filter-class>
 	</filter>
@@ -26,16 +26,26 @@
 		<filter-name>HTMLTagFilter</filter-name>
 		<url-pattern>*.do</url-pattern>
 	</filter-mapping>
-    
+    <!-- 어떤 경로에 있는 context.xml을 미리 객체로 만들어 놓을지에 대한 설정이다. -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath*:egovframework/spring/context-*.xml</param-value>
 	</context-param>
     
-	<listener>
+	<listener><!-- 계층별로 나눈 서블릿을 모두 load되도록 등록할 때 사용. 
+	서블릿이전에 서블릿 초기화하는 용도록 쓰이며, 이 덕분에 설정파일을 여러개 쓸 수 있게 되는 것  -->
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-    
+    <!-- 
+	MVC에서 Controller 역할을 하게 될 DispatcherServlet 객체 등록.
+	*.do라는 요청이 들어오면 appServlet이름의 서블릿 클래스인 org.springframework.web.servlet.DispatcherServlet를 실행한다.
+	DispatcherServlet 클래스에 대한 설정 내용은 /WEB-INF/spring/appServlet/dispatcher-servlet.xml에 설정되어 있다. 
+	
+	각각 contextConfigLocation 의 context 들을 가지고 가서 dispatcherServlet 에 다음 내용을 처리 할 수 있도록 할당해주는 것 같다.
+	한편, dispatcher-servlet의 이름은 어떤 이름이어도 상관이 없으나, 
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    라는 태그를 통해 서블릿임을 명시(로드) 해주면 되는 것 같다.
+	-->
 	<servlet>
 		<servlet-name>action</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -45,7 +55,7 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-    
+    <!-- *.do로 들어오는 요청은 전부 이 태그가 잡아준다. -->
 	<servlet-mapping>
 		<servlet-name>action</servlet-name>
 		<url-pattern>*.do</url-pattern>
